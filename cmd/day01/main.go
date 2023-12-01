@@ -11,10 +11,12 @@ import (
 
 func main() {
 	fn := parseFlags()
-	if err := run(fn); err != nil {
+	sum, err := solve(fn)
+	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		os.Exit(1)
 	}
+	fmt.Println(sum)
 }
 
 func parseFlags() string {
@@ -29,23 +31,30 @@ func parseFlags() string {
 	return *fn
 }
 
-func run(fn string) error {
+func solve(fn string) (int, error) {
 	f, err := os.Open(fn)
 	if err != nil {
-		return fmt.Errorf("opening file: %w", err)
+		return 0, fmt.Errorf("opening file: %w", err)
 	}
 	defer f.Close()
 
-	s := bufio.NewScanner(f)
-	for s.Scan() {
-		fmt.Println(s.Text())
+	scan := bufio.NewScanner(f)
+	sum := 0
+	ln := 0
+	for scan.Scan() {
+		ln++
+		v, err := getCalibrationValue(scan.Text())
+		if err != nil {
+			return 0, fmt.Errorf("error at line %d (%s): %w", ln, scan.Text(), err)
+		}
+		sum += v
 	}
 
-	if err := s.Err(); err != nil {
-		return fmt.Errorf("reading file: %w", err)
+	if err := scan.Err(); err != nil {
+		return 0, fmt.Errorf("reading file: %w", err)
 	}
 
-	return nil
+	return sum, nil
 }
 
 func getCalibrationValue(s string) (int, error) {
