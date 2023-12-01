@@ -49,21 +49,23 @@ func run(fn string) error {
 }
 
 func getCalibrationValue(s string) (int, error) {
-	var first, last *rune
+	var first, last rune
 
+	found := false
 	for _, r := range s {
 		if unicode.IsDigit(r) {
-			if first == nil {
-				first = &r
+			if !found {
+				first = r
+				found = true
 			}
-			last = &r
+			last = r
 		}
 	}
 
-	if first == nil {
+	if !found {
 		return 0, fmt.Errorf("no digits found in input")
 	}
 
-	res := string(*first) + string(*last)
+	res := string(first) + string(last)
 	return strconv.Atoi(res)
 }
