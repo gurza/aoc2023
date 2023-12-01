@@ -9,6 +9,19 @@ import (
 	"unicode"
 )
 
+// digits are actually spelled out with letters
+var digits = map[string]int{
+	"one":   1,
+	"two":   2,
+	"three": 3,
+	"four":  4,
+	"five":  5,
+	"six":   6,
+	"seven": 7,
+	"eight": 8,
+	"nine":  9,
+}
+
 func main() {
 	fn := parseFlags()
 	sum, err := solve(fn)
@@ -58,23 +71,57 @@ func solve(fn string) (int, error) {
 }
 
 func getCalibrationValue(s string) (int, error) {
-	var first, last rune
+	var first, last int
 
-	found := false
-	for _, r := range s {
-		if unicode.IsDigit(r) {
-			if !found {
-				first = r
-				found = true
+	for i := 0; i < len(s); {
+		dig, mov, ok := findDigit(s[i:])
+		if ok {
+			if first == 0 {
+				first = dig
 			}
-			last = r
+			last = dig
+			i += mov
+		} else {
+			i++
 		}
 	}
 
-	if !found {
+	if first == 0 {
 		return 0, fmt.Errorf("no digits found in input")
 	}
 
-	res := string(first) + string(last)
-	return strconv.Atoi(res)
+	return first*10 + last, nil
+}
+
+func findDigit(s string) (int, int, bool) {
+	if len(s) == 0 {
+		return 0, 0, false
+	}
+
+	if dig, ok := checkNumericDigit(rune(s[0])); ok {
+		return dig, 1, true
+	}
+
+	if dig, size, ok := checkSpelledDigit(s); ok {
+		return dig, size, true
+	}
+
+	return 0, 0, false
+}
+
+func checkNumericDigit(r rune) (int, bool) {
+	if unicode.IsDigit(r) {
+		dig, _ := strconv.Atoi(string(r))
+		return dig, true
+	}
+	return 0, false
+}
+
+func checkSpelledDigit(s string) (int, int, bool) {
+	for word, dig := range digits {
+		if len(s) >= len(word) && s[:len(word)] == word {
+			return dig, len(word), true
+		}
+	}
+	return 0, 0, false
 }
