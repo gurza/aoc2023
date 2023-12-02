@@ -73,16 +73,13 @@ func solve(fn string) (int, error) {
 func getCalibrationValue(s string) (int, error) {
 	var first, last int
 
-	for i := 0; i < len(s); {
-		dig, mov, ok := findDigit(s[i:])
+	for i := 0; i < len(s); i++ {
+		dig, ok := findDigit(s[i:])
 		if ok {
 			if first == 0 {
 				first = dig
 			}
 			last = dig
-			i += mov
-		} else {
-			i++
 		}
 	}
 
@@ -93,20 +90,20 @@ func getCalibrationValue(s string) (int, error) {
 	return first*10 + last, nil
 }
 
-func findDigit(s string) (int, int, bool) {
+func findDigit(s string) (int, bool) {
 	if len(s) == 0 {
-		return 0, 0, false
+		return 0, false
 	}
 
 	if dig, ok := checkNumericDigit(rune(s[0])); ok {
-		return dig, 1, true
+		return dig, true
 	}
 
-	if dig, size, ok := checkSpelledDigit(s); ok {
-		return dig, size, true
+	if dig, ok := checkSpelledDigit(s); ok {
+		return dig, true
 	}
 
-	return 0, 0, false
+	return 0, false
 }
 
 func checkNumericDigit(r rune) (int, bool) {
@@ -117,11 +114,11 @@ func checkNumericDigit(r rune) (int, bool) {
 	return 0, false
 }
 
-func checkSpelledDigit(s string) (int, int, bool) {
+func checkSpelledDigit(s string) (int, bool) {
 	for word, dig := range digits {
 		if len(s) >= len(word) && s[:len(word)] == word {
-			return dig, len(word), true
+			return dig, true
 		}
 	}
-	return 0, 0, false
+	return 0, false
 }
