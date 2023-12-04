@@ -42,8 +42,14 @@ func getSumIDs(s string) (int, error) {
 		return 0, err
 	}
 
-	if len(sets) == 0 {
-		return 0, nil
+	for _, set := range sets {
+		red, green, blue, err := getCubes(set)
+		if err != nil {
+			return 0, err
+		}
+		if red > 12 || green > 13 || blue > 14 {
+			return 0, nil
+		}
 	}
 
 	return id, nil
@@ -78,4 +84,35 @@ func getSets(gameEntry string) ([]string, error) {
 	}
 
 	return sets, nil
+}
+
+func getCubes(s string) (int, int, int, error) {
+	var red, green, blue int
+	var err error
+
+	parts := strings.Split(s, ",")
+	for _, part := range parts {
+		piece := strings.Fields(strings.TrimSpace(part))
+		if len(piece) != 2 {
+			return 0, 0, 0, fmt.Errorf("invalid format")
+		}
+
+		count, err := strconv.Atoi(piece[0])
+		if err != nil {
+			return 0, 0, 0, fmt.Errorf("invalid number format: %w", err)
+		}
+
+		switch piece[1] {
+		case "blue":
+			blue += count
+		case "red":
+			red += count
+		case "green":
+			green += count
+		default:
+			return 0, 0, 0, fmt.Errorf("invalid color: %s", piece[1])
+		}
+	}
+
+	return red, green, blue, err
 }
