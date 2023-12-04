@@ -21,13 +21,13 @@ func SumLines(r io.Reader, h Handler) (int, error) {
 		i++
 		v, err := h(scan.Text())
 		if err != nil {
-			return 0, fmt.Errorf("error at line %d: %v, %w", i, scan.Text(), err)
+			return 0, fmt.Errorf("line %d: %v, %w", i, scan.Text(), err)
 		}
 		sum += v
 	}
 
 	if err := scan.Err(); err != nil {
-		return 0, fmt.Errorf("error reading from input: %w", err)
+		return 0, fmt.Errorf("failed to read from input: %w", err)
 	}
 
 	return sum, nil
