@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bufio"
+	"aoc2023/pkg/solver"
 	"flag"
 	"fmt"
 	"os"
@@ -24,7 +24,14 @@ var digits = map[string]int{
 
 func main() {
 	fn := parseFlags()
-	sum, err := solve(fn)
+	f, err := os.Open(fn)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error opening file %s: %s\n", fn, err)
+		os.Exit(1)
+	}
+	defer f.Close()
+
+	sum, err := solver.SumLines(f, getCalibrationValue)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		os.Exit(1)
@@ -42,32 +49,6 @@ func parseFlags() string {
 	}
 
 	return *fn
-}
-
-func solve(fn string) (int, error) {
-	f, err := os.Open(fn)
-	if err != nil {
-		return 0, fmt.Errorf("opening file: %w", err)
-	}
-	defer f.Close()
-
-	scan := bufio.NewScanner(f)
-	sum := 0
-	ln := 0
-	for scan.Scan() {
-		ln++
-		v, err := getCalibrationValue(scan.Text())
-		if err != nil {
-			return 0, fmt.Errorf("error at line %d (%s): %w", ln, scan.Text(), err)
-		}
-		sum += v
-	}
-
-	if err := scan.Err(); err != nil {
-		return 0, fmt.Errorf("reading file: %w", err)
-	}
-
-	return sum, nil
 }
 
 func getCalibrationValue(s string) (int, error) {
