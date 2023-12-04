@@ -23,7 +23,7 @@ func main() {
 	}
 	defer f.Close()
 
-	sum, err := solver.SumLines(f, getSumIDs)
+	sum, err := solver.SumLines(f, checkCubesAndReturnGameID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		os.Exit(1)
@@ -31,7 +31,7 @@ func main() {
 	fmt.Println(sum)
 }
 
-func getSumIDs(s string) (int, error) {
+func checkCubesAndReturnGameID(s string) (int, error) {
 	id, err := getGameID(s)
 	if err != nil {
 		return 0, err
