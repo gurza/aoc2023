@@ -23,12 +23,38 @@ func main() {
 	}
 	defer f.Close()
 
-	sum, err := solver.SumLines(f, checkCubesAndReturnGameID)
+	sum, err := solver.SumLines(f, getSetPower)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		os.Exit(1)
 	}
 	fmt.Println(sum)
+}
+
+func getSetPower(s string) (int, error) {
+	sets, err := getSets(s)
+	if err != nil {
+		return 0, err
+	}
+
+	red, green, blue := 0, 0, 0
+	for _, set := range sets {
+		red1, green1, blue1, err := getCubes(set)
+		if err != nil {
+			return 0, err
+		}
+		if red1 > red {
+			red = red1
+		}
+		if green1 > green {
+			green = green1
+		}
+		if blue1 > blue {
+			blue = blue1
+		}
+	}
+
+	return red * green * blue, nil
 }
 
 func checkCubesAndReturnGameID(s string) (int, error) {
