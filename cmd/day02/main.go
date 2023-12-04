@@ -37,24 +37,24 @@ func getSetPower(s string) (int, error) {
 		return 0, err
 	}
 
-	red, green, blue := 0, 0, 0
+	redMax, greenMax, blueMax := 0, 0, 0
 	for _, set := range sets {
-		red1, green1, blue1, err := getCubes(set)
+		red, green, blue, err := getCubes(set)
 		if err != nil {
 			return 0, err
 		}
-		if red1 > red {
-			red = red1
+		if red > redMax {
+			redMax = red
 		}
-		if green1 > green {
-			green = green1
+		if green > greenMax {
+			greenMax = green
 		}
-		if blue1 > blue {
-			blue = blue1
+		if blue > blueMax {
+			blueMax = blue
 		}
 	}
 
-	return red * green * blue, nil
+	return redMax * greenMax * blueMax, nil
 }
 
 func checkCubesAndReturnGameID(s string) (int, error) {
