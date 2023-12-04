@@ -2,7 +2,7 @@ package main
 
 import (
 	"aoc2023/pkg/solver"
-	"flag"
+	"aoc2023/pkg/util"
 	"fmt"
 	"os"
 	"strconv"
@@ -23,7 +23,12 @@ var digits = map[string]int{
 }
 
 func main() {
-	fn := parseFlags()
+	fn, err := util.ParseFlags()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
 	f, err := os.Open(fn)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error opening file %s: %s\n", fn, err)
@@ -37,18 +42,6 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Println(sum)
-}
-
-func parseFlags() string {
-	fn := flag.String("f", "", "Path to your puzzle input file")
-	flag.Parse()
-
-	if *fn == "" {
-		fmt.Println("Usage: program -f <filename>")
-		os.Exit(1)
-	}
-
-	return *fn
 }
 
 func getCalibrationValue(s string) (int, error) {
