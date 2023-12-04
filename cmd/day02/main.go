@@ -5,6 +5,8 @@ import (
 	"aoc2023/pkg/util"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 )
 
 func main() {
@@ -30,5 +32,26 @@ func main() {
 }
 
 func getSumIDs(s string) (int, error) {
-	return 1, nil
+	id, err := getGameID(s)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func getGameID(s string) (int, error) {
+	parts := strings.Split(s, ":")
+	if len(parts) < 2 {
+		return 0, fmt.Errorf("invalid game entry format")
+	}
+
+	id := strings.TrimSpace(strings.TrimPrefix(parts[0], "Game"))
+
+	id1, err := strconv.Atoi(id)
+	if err != nil {
+		return 0, fmt.Errorf("invalid game ID: %w", err)
+	}
+
+	return id1, nil
 }
