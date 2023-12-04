@@ -37,6 +37,15 @@ func getSumIDs(s string) (int, error) {
 		return 0, err
 	}
 
+	sets, err := getSets(s)
+	if err != nil {
+		return 0, err
+	}
+
+	if len(sets) == 0 {
+		return 0, nil
+	}
+
 	return id, nil
 }
 
@@ -54,4 +63,19 @@ func getGameID(s string) (int, error) {
 	}
 
 	return id1, nil
+}
+
+func getSets(gameEntry string) ([]string, error) {
+	parts := strings.SplitN(gameEntry, ":", 2)
+	if len(parts) < 2 {
+		return nil, fmt.Errorf("invalid game entry format")
+	}
+
+	sets := strings.Split(strings.TrimSpace(parts[1]), ";")
+
+	for i, set := range sets {
+		sets[i] = strings.TrimSpace(set)
+	}
+
+	return sets, nil
 }
