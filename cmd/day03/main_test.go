@@ -1,9 +1,119 @@
 package main
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
+
+func TestSumNumbersAdjacentToSymbols(t *testing.T) {
+	testCases := []struct {
+		batch []string
+		idx   int
+		want  int
+	}{
+		{
+			batch: []string{
+				"467..114..",
+				"...*......",
+			},
+			idx:  0,
+			want: 467,
+		},
+		{
+			batch: []string{
+				"467..114..",
+				"...*......",
+				"..35..633.",
+			},
+			idx:  1,
+			want: 0,
+		},
+		{
+			batch: []string{
+				"...*......",
+				"..35..633.",
+				"......#...",
+			},
+			idx:  1,
+			want: 35 + 633,
+		},
+		{
+			batch: []string{
+				"..35..633.",
+				"......#...",
+				"617*......",
+			},
+			idx:  1,
+			want: 0,
+		},
+		{
+			batch: []string{
+				"......#...",
+				"617*......",
+				".....+.58.",
+			},
+			idx:  1,
+			want: 617,
+		},
+		{
+			batch: []string{
+				"617*......",
+				".....+.58.",
+				"..592.....",
+			},
+			idx:  1,
+			want: 0,
+		},
+		{
+			batch: []string{
+				".....+.58.",
+				"..592.....",
+				"......755.",
+			},
+			idx:  1,
+			want: 592,
+		},
+		{
+			batch: []string{
+				"..592.....",
+				"......755.",
+				"...$.*....",
+			},
+			idx:  1,
+			want: 755,
+		},
+		{
+			batch: []string{
+				"......755.",
+				"...$.*....",
+				".664.598..",
+			},
+			idx:  1,
+			want: 0,
+		},
+		{
+			batch: []string{
+				"...$.*....",
+				".664.598..",
+			},
+			idx:  1,
+			want: 664 + 598,
+		},
+	}
+
+	for i, tc := range testCases {
+		t.Run(fmt.Sprintf("test-%d", i), func(t *testing.T) {
+			got, err := sumNumbersAdjacentToSymbols(tc.batch, tc.idx)
+			if err != nil {
+				t.Errorf("TestSumNumbersAdjacentToSymbols(%s) error = %v", tc.batch, err)
+			}
+			if got != tc.want {
+				t.Errorf("TestSumNumbersAdjacentToSymbols(%s) = %d; want %d", tc.batch, got, tc.want)
+			}
+		})
+	}
+}
 
 func TestExtractNumbers(t *testing.T) {
 	testCases := []struct {
