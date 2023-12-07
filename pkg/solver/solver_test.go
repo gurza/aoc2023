@@ -18,6 +18,18 @@ func sumInts(batch []string, idx int) (int, error) {
 	return sum, nil
 }
 
+func sumCurInts(batch []string, idx int) (int, error) {
+	if idx < 0 || idx >= len(batch) {
+		return 0, fmt.Errorf("index %d is out of bounds for batch: %v", idx, batch)
+	}
+
+	var v int
+	if _, err := fmt.Sscanf(batch[idx], "%d", &v); err != nil {
+		return 0, err
+	}
+	return v, nil
+}
+
 func TestSumAdjacentLines(t *testing.T) {
 	testCases := []struct {
 		h    BatchHandler
@@ -38,6 +50,18 @@ func TestSumAdjacentLines(t *testing.T) {
 			n:    2,
 			in:   "0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
 			want: 198,
+		},
+		{
+			h:    sumCurInts,
+			n:    1,
+			in:   "0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+			want: 45,
+		},
+		{
+			h:    sumCurInts,
+			n:    2,
+			in:   "0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+			want: 45,
 		},
 	}
 

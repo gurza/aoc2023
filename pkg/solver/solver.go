@@ -69,8 +69,14 @@ func SumAdjacentLines(h BatchHandler, n int, r io.Reader) (int, error) {
 		buf = append(buf, line)
 
 		if i >= n {
-			if err := proc(i - n); err != nil {
-				return 0, err
+			if len(buf) == 2*n+1 {
+				if err := proc(n); err != nil {
+					return 0, err
+				}
+			} else {
+				if err := proc(0); err != nil {
+					return 0, err
+				}
 			}
 		}
 
@@ -81,13 +87,13 @@ func SumAdjacentLines(h BatchHandler, n int, r io.Reader) (int, error) {
 		return 0, fmt.Errorf("failed to read from input: %w", err)
 	}
 
-	for j := 0; j < n; j++ {
+	for i = 0; i < n; i++ {
 		if len(buf) == 0 {
 			break
 		}
 
 		buf = buf[1:]
-		if err := proc(i - j); err != nil {
+		if err := proc(len(buf) - 1); err != nil {
 			return 0, err
 		}
 	}
