@@ -33,10 +33,17 @@ func main() {
 }
 
 type number struct {
-	value    int
+	// value represents the numerical value of the number.
+	value int
+
+	// startIdx indicates the starting index of the number in the string.
 	startIdx int
-	endIdx   int
-	checked  bool
+
+	// endIdx indicates the ending index of the number in the string.
+	endIdx int
+
+	// checked denotes whether the number has been checked or verified.
+	checked bool
 }
 
 func sumAdjacentNumbers(b []string) (int, error) {
