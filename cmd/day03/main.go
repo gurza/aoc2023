@@ -24,7 +24,7 @@ func main() {
 	}
 	defer f.Close()
 
-	sum, err := solver.SumAdjacentLines(sumAdjacentNumbers, 1, f)
+	sum, err := solver.SumAdjacentLines(sumNumbersAdjacentToSymbols, 1, f)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		os.Exit(1)
@@ -46,8 +46,36 @@ type number struct {
 	checked bool
 }
 
-func sumAdjacentNumbers(b []string) (int, error) {
+func sumNumbersAdjacentToSymbols(batch []string, idx int) (int, error) {
 	sum := 0
+
+	nums, err := extractNumbers(batch[idx])
+	if err != nil {
+		return 0, err
+	}
+	for _, n := range nums {
+		if n.checked {
+			sum += n.value
+			continue
+		}
+		stop := false
+		for i := 0; i < idx; i++ {
+			if hasSymbolsInSubstring(batch[i], n.startIdx-1, n.endIdx+1) {
+				sum += n.value
+				stop = true
+				break
+			}
+		}
+		if stop {
+			continue
+		}
+		for i := idx + 1; i < len(batch); i++ {
+			if hasSymbolsInSubstring(batch[i], n.startIdx-1, n.endIdx+1) {
+				sum += n.value
+			}
+		}
+	}
+
 	return sum, nil
 }
 
@@ -55,6 +83,28 @@ func sumAdjacentNumbers(b []string) (int, error) {
 // neither a digit nor a period.
 func isSymbol(ch rune) bool {
 	return !unicode.IsDigit(ch) && ch != '.'
+}
+
+// hasSymbolsInSubstring checks if there are any symbols in the substring of s
+// defined by startIdx and endIdx.
+func hasSymbolsInSubstring(s string, startIdx, endIdx int) bool {
+	if startIdx < 0 {
+		startIdx = 0
+	}
+	if endIdx >= len(s) {
+		endIdx = len(s) - 1
+	}
+	if startIdx > endIdx {
+		return false
+	}
+
+	for _, ch := range s[startIdx : endIdx+1] {
+		if isSymbol(ch) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func extractNumbers(s string) ([]number, error) {
