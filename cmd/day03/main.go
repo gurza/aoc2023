@@ -36,11 +36,18 @@ type number struct {
 	value    int
 	startIdx int
 	endIdx   int
+	checked  bool
 }
 
 func sumAdjacentNumbers(b []string) (int, error) {
 	sum := 0
 	return sum, nil
+}
+
+// isSymbol checks if a character is a symbol, which is defined as being
+// neither a digit nor a period.
+func isSymbol(ch rune) bool {
+	return !unicode.IsDigit(ch) && ch != '.'
 }
 
 func extractNumbers(s string) ([]number, error) {
@@ -59,10 +66,18 @@ func extractNumbers(s string) ([]number, error) {
 			if err != nil {
 				return nil, err
 			}
+			chkd := false
+			if start > 0 && isSymbol(rune(s[start-1])) {
+				chkd = true
+			}
+			if i < len(s) && isSymbol(rune(s[i])) {
+				chkd = true
+			}
 			nums = append(nums, number{
 				value:    val,
 				startIdx: start,
 				endIdx:   i - 1,
+				checked:  chkd,
 			})
 			buf.Reset()
 			start = -1
@@ -74,10 +89,18 @@ func extractNumbers(s string) ([]number, error) {
 		if err != nil {
 			return nil, err
 		}
+		chkd := false
+		if start > 0 && isSymbol(rune(s[start-1])) {
+			chkd = true
+		}
+		if len(s) > start+buf.Len() && isSymbol(rune(s[start+buf.Len()])) {
+			chkd = true
+		}
 		nums = append(nums, number{
 			value:    value,
 			startIdx: start,
 			endIdx:   len(s) - 1,
+			checked:  chkd,
 		})
 	}
 

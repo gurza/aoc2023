@@ -20,16 +20,23 @@ func TestExtractNumbers(t *testing.T) {
 			name: "Multiple digit numbers",
 			in:   ".664.598..",
 			want: []number{
-				{664, 1, 3},
-				{598, 5, 7},
+				{664, 1, 3, false},
+				{598, 5, 7, false},
 			},
 		},
 		{
 			name: "Numbers at edges",
 			in:   "1......755",
 			want: []number{
-				{1, 0, 0},
-				{755, 7, 9},
+				{1, 0, 0, false},
+				{755, 7, 9, false},
+			},
+		},
+		{
+			name: "Number adjacent to symbol",
+			in:   "617*......",
+			want: []number{
+				{617, 0, 2, true},
 			},
 		},
 	}
