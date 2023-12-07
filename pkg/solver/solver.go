@@ -39,5 +39,51 @@ type BatchHandler func([]string) (int, error)
 // lines, including each line and its adjacent lines, with the given handler.
 // It returns the sum of the processed values.
 func SumAdjacentLines(r io.Reader, n int, h BatchHandler) (int, error) {
-	return 0, nil
+	if n < 1 {
+		return 0, fmt.Errorf("n must be at least 1")
+	}
+
+	scan := bufio.NewScanner(r)
+	var window []string
+	sum := 0
+	i := 0
+
+	processBatch := func() error {
+		v, err := h(window)
+		if err != nil {
+			return fmt.Errorf("batch error at line %d: %w", i, err)
+		}
+		sum += v
+		return nil
+	}
+
+	for scan.Scan() {
+		line := scan.Text()
+
+		if len(window) == 2*n+1 {
+			window = window[1:]
+		}
+		window = append(window, line)
+
+		if i >= n {
+			if err := processBatch(); err != nil {
+				return 0, err
+			}
+		}
+
+		i++
+	}
+
+	if err := scan.Err(); err != nil {
+		return 0, fmt.Errorf("failed to read from input: %w", err)
+	}
+
+	for j := 0; j < n; j++ {
+		window = window[1:]
+		if err := processBatch(); err != nil {
+			return 0, err
+		}
+	}
+
+	return sum, nil
 }
