@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func sumInts(batch []string) (int, error) {
+func sumInts(batch []string, idx int) (int, error) {
 	sum := 0
 	for _, s := range batch {
 		var v int
