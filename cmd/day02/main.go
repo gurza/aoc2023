@@ -23,7 +23,7 @@ func main() {
 	}
 	defer f.Close()
 
-	sum, err := solver.SumLines(f, getSetPower)
+	sum, err := solver.SumLines(getSetPower, f)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		os.Exit(1)

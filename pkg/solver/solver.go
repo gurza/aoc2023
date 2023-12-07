@@ -12,7 +12,7 @@ type Handler func(string) (int, error)
 
 // SumLines reads lines from the given reader, processes each line
 // with the provided handler, and returns the sum.
-func SumLines(r io.Reader, h Handler) (int, error) {
+func SumLines(h Handler, r io.Reader) (int, error) {
 	sum := 0
 
 	scan := bufio.NewScanner(r)
