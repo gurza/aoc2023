@@ -32,3 +32,12 @@ func SumLines(r io.Reader, h Handler) (int, error) {
 
 	return sum, nil
 }
+
+type BatchHandler func([]string) (int, error)
+
+// SumAdjacentLines reads lines from the given reader, processes batches of
+// lines, including each line and its adjacent lines, with the given handler.
+// It returns the sum of the processed values.
+func SumAdjacentLines(r io.Reader, n int, h BatchHandler) (int, error) {
+	return 0, nil
+}
