@@ -53,25 +53,17 @@ func sumNumbersAdjacentToSymbols(batch []string, idx int) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	for _, n := range nums {
-		if n.checked {
-			sum += n.value
+	for _, num := range nums {
+		if num.checked {
+			sum += num.value
 			continue
 		}
-		stop := false
-		for i := 0; i < idx; i++ {
-			if hasSymbolsInSubstring(batch[i], n.startIdx-1, n.endIdx+1) {
-				sum += n.value
-				stop = true
+
+		// Check for symbols in adjacent lines
+		for i := range batch {
+			if i != idx && hasSymbolsInSubstring(batch[i], num.startIdx-1, num.endIdx+1) {
+				sum += num.value
 				break
-			}
-		}
-		if stop {
-			continue
-		}
-		for i := idx + 1; i < len(batch); i++ {
-			if hasSymbolsInSubstring(batch[i], n.startIdx-1, n.endIdx+1) {
-				sum += n.value
 			}
 		}
 	}
