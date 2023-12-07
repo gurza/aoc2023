@@ -25,7 +25,7 @@ func TestSumAdjacentLines(t *testing.T) {
 	// and last lines, which are added twice
 	want := 2*(0+9) + 3*(1+2+3+4+5+6+7+8)
 
-	got, err := SumAdjacentLines(rdr, 1, h)
+	got, err := SumAdjacentLines(h, 1, rdr)
 	if err != nil {
 		t.Errorf("SumAdjacentLines returned an error: %v", err)
 	} else if got != want {

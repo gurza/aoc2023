@@ -38,7 +38,7 @@ type BatchHandler func([]string) (int, error)
 // SumAdjacentLines reads lines from the given reader, processes batches of
 // lines, including each line and its adjacent lines, with the given handler.
 // It returns the sum of the processed values.
-func SumAdjacentLines(r io.Reader, n int, h BatchHandler) (int, error) {
+func SumAdjacentLines(h BatchHandler, n int, r io.Reader) (int, error) {
 	if n < 1 {
 		return 0, fmt.Errorf("n must be at least 1")
 	}
