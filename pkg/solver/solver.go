@@ -8,7 +8,7 @@ import (
 
 // Handler defines the type for the function that will be called
 // on each input string.
-type Handler func(s string) (int, error)
+type Handler func(string) (int, error)
 
 // SumLines reads lines from the given reader, processes each line
 // with the provided handler, and returns the sum.
