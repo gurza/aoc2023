@@ -18,12 +18,12 @@ func SumLines(h Handler, r io.Reader) (int, error) {
 	scan := bufio.NewScanner(r)
 	i := 0
 	for scan.Scan() {
-		i++
 		v, err := h(scan.Text())
 		if err != nil {
-			return 0, fmt.Errorf("line %d: %v, %w", i, scan.Text(), err)
+			return 0, fmt.Errorf("line %d: %v, %w", i+1, scan.Text(), err)
 		}
 		sum += v
+		i++
 	}
 
 	if err := scan.Err(); err != nil {
@@ -43,30 +43,30 @@ func SumAdjacentLines(h BatchHandler, n int, r io.Reader) (int, error) {
 		return 0, fmt.Errorf("n must be at least 1")
 	}
 
-	scan := bufio.NewScanner(r)
-	var window []string
+	var buf []string
 	sum := 0
-	i := 0
 
-	processBatch := func() error {
-		v, err := h(window)
+	proc := func() error {
+		v, err := h(buf)
 		if err != nil {
-			return fmt.Errorf("batch error at line %d: %w", i, err)
+			return fmt.Errorf("batch error: %w", err)
 		}
 		sum += v
 		return nil
 	}
 
+	scan := bufio.NewScanner(r)
+	i := 0
 	for scan.Scan() {
 		line := scan.Text()
 
-		if len(window) == 2*n+1 {
-			window = window[1:]
+		if len(buf) == 2*n+1 {
+			buf = buf[1:]
 		}
-		window = append(window, line)
+		buf = append(buf, line)
 
 		if i >= n {
-			if err := processBatch(); err != nil {
+			if err := proc(); err != nil {
 				return 0, err
 			}
 		}
@@ -78,9 +78,13 @@ func SumAdjacentLines(h BatchHandler, n int, r io.Reader) (int, error) {
 		return 0, fmt.Errorf("failed to read from input: %w", err)
 	}
 
-	for j := 0; j < n; j++ {
-		window = window[1:]
-		if err := processBatch(); err != nil {
+	for i = 0; i < n; i++ {
+		if len(buf) == 0 {
+			break
+		}
+
+		buf = buf[1:]
+		if err := proc(); err != nil {
 			return 0, err
 		}
 	}
