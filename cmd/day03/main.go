@@ -24,7 +24,7 @@ func main() {
 	}
 	defer f.Close()
 
-	sum, err := solver.SumAdjacentLines(sumNumbersAdjacentToSymbols, 1, f)
+	sum, err := solver.SumAdjacentLines(getGearRatio, 1, f)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		os.Exit(1)
@@ -100,7 +100,7 @@ func isSymbol(ch rune) bool {
 }
 
 // hasSymbolsInSubstring checks if there are any symbols in the substring of s
-// defined by start and end indexes.
+// defined by start and end indices.
 func hasSymbolsInSubstring(s string, start, end int) bool {
 	if start < 0 {
 		start = 0
@@ -152,4 +152,48 @@ func extractNumbers(s string) ([]number, error) {
 	}
 
 	return nums, nil
+}
+
+// extractGears returns the indices of '*' symbols in the input string.
+func extractGears(s string) ([]int, error) {
+	var idxs []int
+	for idx, ch := range s {
+		if ch == '*' {
+			idxs = append(idxs, idx)
+		}
+	}
+	return idxs, nil
+}
+
+func getGearRatio(batch []string, idx int) (int, error) {
+	sum := 0
+
+	gears, err := extractGears(batch[idx])
+	if err != nil {
+		return 0, err
+	}
+
+	for _, gear := range gears {
+		var agg []number
+		for _, s := range batch {
+			nums, err := extractNumbers(s)
+			if err != nil {
+				return 0, err
+			}
+			for _, num := range nums {
+				if gear >= (num.startIdx-1) && gear <= (num.endIdx+1) {
+					agg = append(agg, num)
+				}
+			}
+		}
+		if len(agg) > 0 {
+			m := 1
+			for _, num := range agg {
+				m *= num.value
+			}
+			sum += m
+		}
+	}
+
+	return sum, nil
 }
