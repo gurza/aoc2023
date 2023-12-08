@@ -149,6 +149,14 @@ func TestExtractNumbers(t *testing.T) {
 				{617, 0, 2, true},
 			},
 		},
+		{
+			name: "Numbers at edges adjacent to symbol",
+			in:   "1#....#755",
+			want: []number{
+				{1, 0, 0, true},
+				{755, 7, 9, true},
+			},
+		},
 	}
 
 	for _, tc := range testCases {

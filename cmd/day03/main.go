@@ -142,9 +142,6 @@ func extractNumbers(s string) ([]number, error) {
 		if start > 0 && isSymbol(rune(s[start-1])) {
 			chkd = true
 		}
-		if len(s) > start+buf.Len() && isSymbol(rune(s[start+buf.Len()])) {
-			chkd = true
-		}
 		nums = append(nums, number{
 			value:    value,
 			startIdx: start,
