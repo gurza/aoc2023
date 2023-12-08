@@ -46,6 +46,28 @@ type number struct {
 	checked bool
 }
 
+// newNumber converts a string buffer to a number struct, setting its start
+// and end indices. It checks if the number is adjacent to a symbol
+// in the provided context string 's'.
+func newNumber(buf strings.Builder, start, end int, s string) (number, error) {
+	val, err := strconv.Atoi(buf.String())
+	if err != nil {
+		return number{}, fmt.Errorf("failed to parse integer: %w", err)
+	}
+	chkd := false
+	if (start > 0 && isSymbol(rune(s[start-1]))) ||
+		(end < len(s)-1 && isSymbol(rune(s[end+1]))) {
+		chkd = true
+	}
+
+	return number{
+		value:    val,
+		startIdx: start,
+		endIdx:   end,
+		checked:  chkd,
+	}, nil
+}
+
 func sumNumbersAdjacentToSymbols(batch []string, idx int) (int, error) {
 	sum := 0
 
@@ -111,43 +133,22 @@ func extractNumbers(s string) ([]number, error) {
 			}
 			buf.WriteRune(ch)
 		} else if buf.Len() > 0 {
-			val, err := strconv.Atoi(buf.String())
+			num, err := newNumber(buf, start, i-1, s)
 			if err != nil {
 				return nil, err
 			}
-			chkd := false
-			if start > 0 && isSymbol(rune(s[start-1])) {
-				chkd = true
-			}
-			if i < len(s) && isSymbol(rune(s[i])) {
-				chkd = true
-			}
-			nums = append(nums, number{
-				value:    val,
-				startIdx: start,
-				endIdx:   i - 1,
-				checked:  chkd,
-			})
+			nums = append(nums, num)
 			buf.Reset()
 			start = -1
 		}
 	}
 
 	if buf.Len() > 0 {
-		value, err := strconv.Atoi(buf.String())
+		num, err := newNumber(buf, start, len(s)-1, s)
 		if err != nil {
 			return nil, err
 		}
-		chkd := false
-		if start > 0 && isSymbol(rune(s[start-1])) {
-			chkd = true
-		}
-		nums = append(nums, number{
-			value:    value,
-			startIdx: start,
-			endIdx:   len(s) - 1,
-			checked:  chkd,
-		})
+		nums = append(nums, num)
 	}
 
 	return nums, nil
