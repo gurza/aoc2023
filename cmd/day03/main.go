@@ -100,19 +100,19 @@ func isSymbol(ch rune) bool {
 }
 
 // hasSymbolsInSubstring checks if there are any symbols in the substring of s
-// defined by startIdx and endIdx.
-func hasSymbolsInSubstring(s string, startIdx, endIdx int) bool {
-	if startIdx < 0 {
-		startIdx = 0
+// defined by start and end indexes.
+func hasSymbolsInSubstring(s string, start, end int) bool {
+	if start < 0 {
+		start = 0
 	}
-	if endIdx >= len(s) {
-		endIdx = len(s) - 1
+	if end >= len(s) {
+		end = len(s) - 1
 	}
-	if startIdx > endIdx {
+	if start > end {
 		return false
 	}
 
-	for _, ch := range s[startIdx : endIdx+1] {
+	for _, ch := range s[start : end+1] {
 		if isSymbol(ch) {
 			return true
 		}
