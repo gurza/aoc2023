@@ -186,7 +186,7 @@ func getGearRatio(batch []string, idx int) (int, error) {
 				}
 			}
 		}
-		if len(agg) > 0 {
+		if len(agg) > 1 {
 			m := 1
 			for _, num := range agg {
 				m *= num.value
