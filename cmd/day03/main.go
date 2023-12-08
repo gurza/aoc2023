@@ -173,25 +173,28 @@ func getGearRatio(batch []string, idx int) (int, error) {
 		return 0, err
 	}
 
+	var nums []number
+	for _, s := range batch {
+		nums1, err := extractNumbers(s)
+		if err != nil {
+			return 0, err
+		}
+		nums = append(nums, nums1...)
+	}
+
 	for _, gear := range gears {
-		var agg []number
-		for _, s := range batch {
-			nums, err := extractNumbers(s)
-			if err != nil {
-				return 0, err
-			}
-			for _, num := range nums {
-				if gear >= (num.startIdx-1) && gear <= (num.endIdx+1) {
-					agg = append(agg, num)
-				}
+		var adjNums []number
+		for _, num := range nums {
+			if gear >= (num.startIdx-1) && gear <= (num.endIdx+1) {
+				adjNums = append(adjNums, num)
 			}
 		}
-		if len(agg) > 1 {
-			m := 1
-			for _, num := range agg {
-				m *= num.value
+		if len(adjNums) >= 2 {
+			mult := 1
+			for _, num := range adjNums {
+				mult *= num.value
 			}
-			sum += m
+			sum += mult
 		}
 	}
 
