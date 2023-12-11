@@ -5,6 +5,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
+	"unicode"
 )
 
 func main() {
@@ -44,4 +46,24 @@ func run(fn string) error {
 	}
 
 	return nil
+}
+
+func getCalibrationValue(s string) (int, error) {
+	var first, last *rune
+
+	for _, r := range s {
+		if unicode.IsDigit(r) {
+			if first == nil {
+				first = &r
+			}
+			last = &r
+		}
+	}
+
+	if first == nil {
+		return 0, fmt.Errorf("no digits found in input")
+	}
+
+	res := string(*first) + string(*last)
+	return strconv.Atoi(res)
 }
