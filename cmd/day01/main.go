@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bufio"
-	"flag"
+	"aoc2023/pkg/solver"
+	"aoc2023/pkg/util"
 	"fmt"
 	"os"
 	"strconv"
@@ -23,51 +23,25 @@ var digits = map[string]int{
 }
 
 func main() {
-	fn := parseFlags()
-	sum, err := solve(fn)
+	fn, err := util.ParseFlags()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	f, err := os.Open(fn)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error opening file %s: %s\n", fn, err)
+		os.Exit(1)
+	}
+	defer f.Close()
+
+	sum, err := solver.SumLines(f, getCalibrationValue)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		os.Exit(1)
 	}
 	fmt.Println(sum)
-}
-
-func parseFlags() string {
-	fn := flag.String("f", "", "Path to your puzzle input file")
-	flag.Parse()
-
-	if *fn == "" {
-		fmt.Println("Usage: program -f <filename>")
-		os.Exit(1)
-	}
-
-	return *fn
-}
-
-func solve(fn string) (int, error) {
-	f, err := os.Open(fn)
-	if err != nil {
-		return 0, fmt.Errorf("opening file: %w", err)
-	}
-	defer f.Close()
-
-	scan := bufio.NewScanner(f)
-	sum := 0
-	ln := 0
-	for scan.Scan() {
-		ln++
-		v, err := getCalibrationValue(scan.Text())
-		if err != nil {
-			return 0, fmt.Errorf("error at line %d (%s): %w", ln, scan.Text(), err)
-		}
-		sum += v
-	}
-
-	if err := scan.Err(); err != nil {
-		return 0, fmt.Errorf("reading file: %w", err)
-	}
-
-	return sum, nil
 }
 
 func getCalibrationValue(s string) (int, error) {
